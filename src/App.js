@@ -1,5 +1,8 @@
 import React, { Component } from "react";
 import "./App.css";
+import "./config";
+import * as firebase from "firebase";
+import swal from "sweetalert";
 
 const emailRegex = RegExp(
   /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
@@ -10,8 +13,8 @@ class App extends Component {
     super(props);
 
     this.state = {
-      firstName: null,
-      lastName: null,
+      firstName: "",
+      lastName: "",
       phone: null,
       email: null,
       password: null,
@@ -27,14 +30,20 @@ class App extends Component {
 
   handleSubmit = (e) => {
     e.preventDefault();
-    console.log(`
-        --SUBMITTING--
-        First Name: ${this.state.firstName}
-        Last Name: ${this.state.lastName}
-        Phone:  ${this.state.phone}
-        Email: ${this.state.email}
-        Password: ${this.state.password}
-      `);
+    firebase.database().ref("data").push({
+      firstName: this.state.firstName,
+      lastName: this.state.lastName,
+      phone: this.state.phone,
+      email: this.state.email,
+      password: this.state.password,
+    });
+    setTimeout(() => {
+      swal({
+        title: `THANKYOU ${this.state.firstName.toUpperCase()} ${this.state.lastName.toUpperCase()}.`,
+        text: "Your Form Has Been Submitted!",
+        icon: "success",
+      });
+    }, 1);
   };
 
   handleChange = (e) => {
